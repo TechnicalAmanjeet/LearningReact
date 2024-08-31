@@ -1,6 +1,8 @@
 import AboutPage from './AboutPage';
 import DisplayUserProfile from './DisplayUserProfile';
 import ProductListing from './ProductListing';
+import RespondingToEvent from './RespondingToEvent';
+import FilterableProductTable from './FilterableProductTable.js';
 
 function MyButton() {
     return (
@@ -15,7 +17,9 @@ function MyApp() {
             {/* <MyButton /> */}
             {/* <AboutPage /> */}
             {/* <DisplayUserProfile /> */}
-            <ProductListing />
+            {/* <ProductListing /> */}
+            {/* <RespondingToEvent /> */}
+            <FilterableProductTable />
         </div>
     );
 }
