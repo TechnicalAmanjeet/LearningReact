@@ -1,4 +1,6 @@
-const product = [
+import { useState } from "react";
+
+const productData = [
     { category: "Fruits", price: "$1", stocked: true, name: "Apple" },
     { category: "Fruits", price: "$1", stocked: true, name: "Dragonfruit" },
     { category: "Fruits", price: "$2", stocked: false, name: "Passionfruit" },
@@ -7,23 +9,26 @@ const product = [
     { category: "Vegetables", price: "$1", stocked: true, name: "Peas" }
 ]
 
-function FilterableProductTableSearch() {
+function FilterableProductTableSearch({handleIsStockData, handleSearchedText}) {
+
     return (
         <form>
             <input 
                 type="text"
                 placeholder="Search..."
+                onChange={(e) => handleSearchedText(e.target.value)}
             />
             <br />
             <input
                 type="checkbox"
+                onInput={(e) => handleIsStockData(e.target.checked)}
             />
             <span>Only show products in stock</span>
         </form>
     )
 }
 
-function FilterableProductTableProductSectionListUnit() {
+function FilterableProductTableProductSectionListUnit({product}) {
 
     return (
         <>
@@ -31,17 +36,21 @@ function FilterableProductTableProductSectionListUnit() {
                 <td
                     style={
                         {
-                            color: 'red'
+                            color: product.stocked ? 'black' : 'red'
                         }
                     }
-                >Apple Bananna Fruit</td>
-                <td>$1</td>
+                >{product.name}</td>
+                <td>{product.price}</td>
             </tr>
         </>
     )
 }
 
-function FilterableProductTableProductSectionList() {
+function FilterableProductTableProductSectionList({products}) {
+    
+    let filterableProductTableProductSectionList = products.map(product =>
+        <FilterableProductTableProductSectionListUnit product={product} />
+    )
 
     return (
         <table
@@ -52,14 +61,14 @@ function FilterableProductTableProductSectionList() {
                 <th>Price</th>
             </tr>
 
-            <FilterableProductTableProductSectionListUnit />
-            <FilterableProductTableProductSectionListUnit />
-            <FilterableProductTableProductSectionListUnit />
+            {filterableProductTableProductSectionList}
         </table>
     );
 }
 
-function FilterableProductTableProductSection() {
+function FilterableProductTableProductSection({category, products}) {
+
+    
     return (
         <div
         style={
@@ -73,9 +82,9 @@ function FilterableProductTableProductSection() {
         }
         >
             <h3>
-                Fruits
+                {category}
             </h3>
-            <FilterableProductTableProductSectionList />
+            <FilterableProductTableProductSectionList products={products} />
         </div>
     );
 }
@@ -83,6 +92,60 @@ function FilterableProductTableProductSection() {
 
 
 export default function FilterableProductTable() {
+    const [products, setProducts] = useState(initializeHandleIsStockData());
+    const [staoked, setStaoked] = useState(false);
+    const [searchText, setSearchText] = useState('');
+
+    function initializeHandleIsStockData() {
+        return productData
+    }
+
+    function handleIsStockData(isStackodData) {
+        setStaoked(false)
+        filterProducts(isStackodData, searchText)
+    }
+
+    function handleSearchedText(value) {
+        setSearchText(value)
+        filterProducts(staoked, value)
+    }
+    
+    function filterProducts(isStackod, inputSearch) {
+        let productD = productData
+        if (inputSearch != '' || inputSearch != undefined) {
+            productD = productD.filter(product =>
+                product.name.includes(inputSearch)
+            )
+        }
+
+        if(isStackod) {
+            productD = productD.filter(product => product.stocked);
+        }
+        
+        setProducts(productD)
+    }
+
+    const groupedByCategories = products.reduce((acc, product) => {
+        const { category } = product;
+        const categoryIndex = acc.findIndex(item => item[category]);
+    
+        if (categoryIndex === -1) {
+            acc.push({
+                [category]: [product]
+            });
+        } else {
+            acc[categoryIndex][category].push(product);
+        }
+    
+        return acc;
+    }, []);
+
+
+    const filterableProductTableProductSection = groupedByCategories.map(groupedByCategory =>
+        Object.entries(groupedByCategory).map(([category, products]) => (
+            <FilterableProductTableProductSection category={category} products={products} />
+        ))
+    );
 
     return(
             <div
@@ -96,10 +159,8 @@ export default function FilterableProductTable() {
                 }
             >
                 <h1>How are you doing.</h1>
-                <FilterableProductTableSearch />
-                <FilterableProductTableProductSection />
-                <FilterableProductTableProductSection />
-                <FilterableProductTableProductSection />
+                <FilterableProductTableSearch handleIsStockData={handleIsStockData} handleSearchedText = {handleSearchedText} />
+                {filterableProductTableProductSection}
             </div>
     );
 }
