@@ -2,7 +2,7 @@ import AboutPage from './AboutPage';
 import DisplayUserProfile from './DisplayUserProfile';
 import ProductListing from './ProductListing';
 import RespondingToEvent from './RespondingToEvent';
-import FilterableProductTable from './FilterableProductTable.js';
+import FilterableProductTableApp from './FilterableProductTableApp.js';
 
 function MyButton() {
     return (
@@ -19,7 +19,7 @@ function MyApp() {
             {/* <DisplayUserProfile /> */}
             {/* <ProductListing /> */}
             {/* <RespondingToEvent /> */}
-            <FilterableProductTable />
+            <FilterableProductTableApp />
         </div>
     );
 }
